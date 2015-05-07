@@ -7,5 +7,5 @@ repository = "https://github.com/richo/threatbutt-rs"
 description = "bindings to the threatbutt api"
 
 [dependencies]
-hyper = "*"
+hyper = "0.3.*"
 url = "*"
