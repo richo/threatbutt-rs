@@ -39,10 +39,9 @@ pub struct ThreatActor(String);
 impl Sample {
     fn url_for(md5: &str) -> Url {
         let mut url = Url::parse(URL).unwrap();
-        {
-            let mut path = url.path_mut().unwrap();
-            path.append(&mut vec!["api".to_string(), "md5".to_string(), md5.to_string()]);
-        }
+        url.path_mut()
+            .unwrap()
+            .append(&mut vec!["api".to_string(), "md5".to_string(), md5.to_string()]);
         url
     }
 }
@@ -50,10 +49,9 @@ impl Sample {
 impl Attribution {
     fn url_for() -> Url {
         let mut url = Url::parse(URL).unwrap();
-        {
-            let mut path = url.path_mut().unwrap();
-            path.append(&mut vec!["api".to_string()]);
-        }
+        url.path_mut()
+            .unwrap()
+            .append(&mut vec!["api".to_string()]);
         url
     }
 }
