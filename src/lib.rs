@@ -1,9 +1,8 @@
 #![feature(collections)]
-use std::io;
 use std::io::{Read,Write};
 use std::fmt;
 use url::Url;
-use hyper::{Get,Post};
+use hyper::Post;
 use hyper::error::HttpError;
 use hyper::header::ContentLength;
 use hyper::net::Fresh;
@@ -61,7 +60,7 @@ impl Attribution {
 
 fn execute_request(req: Request<Fresh>, data: &[u8]) -> Result<Vec<u8>, HttpError> {
     let mut conn = try!(req.start());
-    conn.write(data);
+    let _ = conn.write(data);
     let mut resp = try!(conn.send());
 
     let mut body = Vec::new();
