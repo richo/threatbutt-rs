@@ -1,6 +1,7 @@
 #![feature(collections)]
 use std::io;
 use std::io::{Read,Write};
+use std::fmt;
 use url::Url;
 use hyper::{Get,Post};
 use hyper::error::HttpError;
@@ -13,10 +14,28 @@ extern crate hyper;
 
 pub struct ThreatButt;
 
+impl ThreatActor {
+    fn new(s: Vec<u8>) -> ThreatActor {
+        ThreatActor(String::from_utf8(s).unwrap())
+    }
+
+    pub fn threat_name(&self) -> &str {
+        &self.0
+    }
+}
+
+impl fmt::Debug for ThreatActor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 const URL: &'static str = "http://api.threatbutt.io";
 
 struct Sample;
 struct Attribution;
+
+pub struct ThreatActor(String);
 
 impl Sample {
     fn url_for(md5: &str) -> Url {
@@ -51,21 +70,21 @@ fn execute_request(req: Request<Fresh>, data: &[u8]) -> Result<Vec<u8>, HttpErro
     Ok(body)
 }
 
-pub fn identify_sample(md5: &str) -> Result<String, HttpError> {
+pub fn identify_sample(md5: &str) -> Result<ThreatActor, HttpError> {
     let url = Sample::url_for(md5);
     let mut req = Request::new(Post, url).unwrap();
     req.headers_mut().set(ContentLength(0));
     let body = try!(execute_request(req, &[]));
 
-    return Ok(String::from_utf8(body).unwrap());
+    Ok(ThreatActor::new(body))
 }
 
-pub fn attribute_ip(ip_addr: &str) -> Result<String, HttpError> {
+pub fn attribute_ip(ip_addr: &str) -> Result<ThreatActor, HttpError> {
     let url = Attribution::url_for();
     let payload_bytes = ip_addr.as_bytes();
     let mut req = Request::new(Post, url).unwrap();
     req.headers_mut().set(ContentLength(payload_bytes.len() as u64));
     let body = try!(execute_request(req, payload_bytes));
 
-    return Ok(String::from_utf8(body).unwrap());
+    Ok(ThreatActor::new(body))
 }
