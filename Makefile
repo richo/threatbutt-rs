@@ -1,9 +1,9 @@
 all: sample attribute
 
-sample: example/sample.rs lib
+sample: examples/sample.rs lib
 	rustc -L target/debug -L target/debug/deps $< -o $@
 
-attribute: example/attribute.rs lib
+attribute: examples/attribute.rs lib
 	rustc -L target/debug -L target/debug/deps $< -o $@
 
 
